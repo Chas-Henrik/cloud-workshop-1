@@ -2,5 +2,10 @@ export interface Todo {
   id: string;
   text: string;
   completed: boolean;
-  createdAt: string;
+  createdAt: Date;
+}
+
+export interface NewTodo {
+  text: string;
+  completed: boolean;
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { storage } from '@/lib/storage';
+import { TodoBaseType, TodoType, TodoJSONType, serializeTodo, Todo } from '@/models/todo.model'
+import { connectDB } from '@/lib/db';
 
 export async function DELETE(
   request: NextRequest,
@@ -14,7 +15,8 @@ export async function DELETE(
     );
   }
 
-  storage.remove(id);
+  await connectDB();
+  await Todo.findByIdAndDelete(id);
 
   return NextResponse.json({ success: true });
 }
@@ -33,7 +35,8 @@ export async function PUT(
     );
   }
 
-  const todo = storage.get(id);
+  await connectDB();
+  const todo = await Todo.findById(id);
 
   if (!todo) {
     return NextResponse.json(
@@ -42,8 +45,14 @@ export async function PUT(
     );
   }
 
-  const updatedTodo = { ...todo, completed };
-  storage.update(id, updatedTodo);
+  const updatedTodo: TodoType = {
+    _id: todo.id,
+    text: todo.text,
+    completed: completed,
+    updatedAt: new Date(),
+    createdAt: todo.createdAt,
+  };
+  const result = await Todo.findByIdAndUpdate(id, updatedTodo, { new: true });
 
-  return NextResponse.json({ todo: updatedTodo });
+  return NextResponse.json({ todo: result });
 }
