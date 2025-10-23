@@ -16,6 +16,13 @@ export const storage = {
     todos = todos.filter(t => t.id !== id);
     return true;
   },
+  update: (id: string, updatedTodo: Todo) => {
+    todos = todos.map(todo => (todo.id === id ? updatedTodo : todo));
+    return updatedTodo;
+  },
+  get: (id: string) => {
+    return todos.find(t => t.id === id);
+  },
   clear: () => {
     todos = [];
   }
