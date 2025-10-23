@@ -138,7 +138,7 @@ export default function Home() {
         )}
 
         {/* Main Card */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <div className="bg-red-300 rounded-lg shadow-lg p-6 mb-6">
           {/* Add Todo Form */}
           <form onSubmit={addTodo} className="mb-6">
             <div className="flex gap-2">
