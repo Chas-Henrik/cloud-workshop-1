@@ -1,15 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { storage } from '@/lib/storage';
-import { Todo } from '@/lib/types';
+import { TodoBaseType, TodoType, TodoJSONType, serializeTodo, Todo } from '@/models/todo.model'
+import { connectDB } from '@/lib/db';
 
-export async function GET() {
-  const todos = storage.getAll();
-
-  return NextResponse.json({
-    todos,
-    warning: 'These todos will disappear soon! (Serverless demo)'
-  });
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,20 +15,54 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const newTodo: Todo = {
-      id: crypto.randomUUID(),
+    const newTodo: TodoBaseType = {
       text: text.trim(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
       completed: false,
-      createdAt: new Date().toISOString()
     };
 
-    storage.add(newTodo);
+    await connectDB();
+    const addedTodo: TodoType = await Todo.create(newTodo);
 
-    return NextResponse.json({ todo: newTodo }, { status: 201 });
+    return NextResponse.json({ todo: serializeTodo(addedTodo) }, { status: 201 });
   } catch (error) {
     return NextResponse.json(
       { error: 'Invalid request' },
       { status: 400 }
     );
   }
+}
+
+export async function GET() {
+  try {
+    await connectDB();
+    const todos = await Todo.find()
+    
+    return NextResponse.json({
+      todos: todos.map((todo: TodoType) => serializeTodo(todo))
+    });
+  } catch (error) {
+    console.error("Error fetching todos:", error);
+    return NextResponse.json(
+      { error: 'Failed to fetch todos' },
+      { status: 500 }
+    );
+  }
+
+}
+
+export async function DELETE() {
+  try {
+    await connectDB();
+    await Todo.deleteMany({});
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting todos:", error);
+    return NextResponse.json(
+      { error: 'Failed to delete todos' },
+      { status: 500 }
+    );
+  }
+
 }

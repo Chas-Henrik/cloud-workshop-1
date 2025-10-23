@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Todo } from '@/lib/types';
+import { TodoJSONType } from '@/models/todo.model';
 
 export default function Home() {
-  const [todos, setTodos] = useState<Todo[]>([]);
+  const [todos, setTodos] = useState<TodoJSONType[]>([]);
   const [newTodoText, setNewTodoText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
@@ -16,6 +16,10 @@ export default function Home() {
       setIsLoading(true);
       setError('');
       const response = await fetch('/api/todos');
+      if (!response.ok) {
+        console.error('Error fetching todos:', response.statusText);
+        throw new Error('Failed to fetch todos');
+      }
       const data = await response.json();
       setTodos(data.todos);
       setLastFetchTime(new Date().toLocaleTimeString());
@@ -101,7 +105,7 @@ export default function Home() {
       // Optimistic update
       setTodos(prevTodos =>
         prevTodos.map(todo =>
-          todo.id === id ? { ...todo, completed: !todo.completed } : todo
+          todo._id === id ? { ...todo, completed: !todo.completed } : todo
         )
       );
 
@@ -110,7 +114,7 @@ export default function Home() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ completed: !todos.find(todo => todo.id === id)?.completed }),
+        body: JSON.stringify({ completed: !todos.find(todo => todo._id === id)?.completed }),
       });
 
       if (!response.ok) {
@@ -124,8 +128,7 @@ export default function Home() {
     }
   };
 
-  const getRelativeTime = (dateString: string) => {
-    const date = new Date(dateString);
+  const getRelativeTime = (date: Date) => {
     const now = new Date();
     const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
@@ -208,25 +211,25 @@ export default function Home() {
             <div className="space-y-2">
               {todos.map((todo) => (
                 <div
-                  key={todo.id}
+                  key={todo._id}
                   className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group"
                 >
                   <div className="flex-1 flex items-center">
                     <input
                       type="checkbox"
                       checked={todo.completed}
-                      onChange={() => toggleTodo(todo.id)}
+                      onChange={() => toggleTodo(todo._id)}
                       className="w-5 h-5 mr-3 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                     />
                     <p className={`text-gray-800 ${todo.completed ? 'line-through text-gray-500' : ''}`}>
                       {todo.text}
                     </p>
                     <p className="text-xs text-gray-500 mt-1 ml-3">
-                      {getRelativeTime(todo.createdAt)}
+                      {todo.createdAt ? getRelativeTime(new Date(todo.createdAt)) : ""}
                     </p>
                   </div>
                   <button
-                    onClick={() => deleteTodo(todo.id)}
+                    onClick={() => deleteTodo(todo._id)}
                     className="ml-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 opacity-0 group-hover:opacity-100 transition-opacity"
                   >
                     Delete
