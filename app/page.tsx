@@ -94,6 +94,36 @@ export default function Home() {
     }
   };
 
+  const toggleTodo = async (id: string) => {
+    try {
+      setError('');
+
+      // Optimistic update
+      setTodos(prevTodos =>
+        prevTodos.map(todo =>
+          todo.id === id ? { ...todo, completed: !todo.completed } : todo
+        )
+      );
+
+      const response = await fetch(`/api/todos/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ completed: !todos.find(todo => todo.id === id)?.completed }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to toggle todo');
+      }
+    } catch (err) {
+      setError('Failed to toggle todo');
+      console.error('Error toggling todo:', err);
+      // Refresh to get actual state
+      fetchTodos();
+    }
+  };
+
   const getRelativeTime = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -181,9 +211,17 @@ export default function Home() {
                   key={todo.id}
                   className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group"
                 >
-                  <div className="flex-1">
-                    <p className="text-gray-800">{todo.text}</p>
-                    <p className="text-xs text-gray-500 mt-1">
+                  <div className="flex-1 flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={todo.completed}
+                      onChange={() => toggleTodo(todo.id)}
+                      className="w-5 h-5 mr-3 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <p className={`text-gray-800 ${todo.completed ? 'line-through text-gray-500' : ''}`}>
+                      {todo.text}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1 ml-3">
                       {getRelativeTime(todo.createdAt)}
                     </p>
                   </div>
