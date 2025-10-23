@@ -81,7 +81,7 @@ export default function Home() {
       setError('');
 
       // Optimistic update
-      setTodos(todos.filter(todo => todo.id !== id));
+      setTodos(todos.filter(todo => todo._id !== id));
 
       const response = await fetch(`/api/todos/${id}`, {
         method: 'DELETE',
