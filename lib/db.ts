@@ -10,7 +10,7 @@ if (!MONGODB_URI) {
 }
 
 export async function connectDB() {
-    await mongoose.connect(MONGODB_URI);
+    await mongoose.connect(MONGODB_URI, { dbName: "todoDatabase" });
     // Ensure Mongoose Indexes Are Created
     await Promise.all([
       Todo.init(),
