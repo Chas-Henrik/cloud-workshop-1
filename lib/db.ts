@@ -3,7 +3,7 @@
 import mongoose from "mongoose";
 import { Todo } from "@/models/todo.model";
 
-const MONGODB_URI: string = process.env.MONGODB_VERCEL_URI!;
+const MONGODB_URI: string = process.env.MONGODB_VERCEL_MONGODB_URI!;
 
 if (!MONGODB_URI) {
   throw new Error('Please define the MONGODB_VERCEL_URI environment variable inside .env');
