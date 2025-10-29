@@ -34,10 +34,4 @@ describe("getRelativeTime", () => {
 
         expect(result).toBe("2d ago");
     });
-    // Demo: ett test som ska faila så vi ser röd bock i CI
-	it("intentionally fails so we can demo CI feedback", () => {
-		const result = getRelativeTime(new Date());
-		// Det här kommer inte stämma, och det är meningen :)
-		expect(result).toBe("now");
-	});
 });
