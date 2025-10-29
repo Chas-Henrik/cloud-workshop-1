@@ -1,0 +1,12 @@
+name: CI
+
+on: 
+  push:
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Klona repot såa tt det finns i vår Github Actions runner
+      - run: echo "Hello CI!"
