@@ -10,11 +10,14 @@ jobs:
         with:
           node-version: 18
       - run: npm install && npm install -g @lhci/cli@0.15.x
-      - name: Build static site
+      - name: Build app
         run: npm run build
         env:
           VERCEL_MONGODB_URI: ${{ secrets.VERCEL_MONGODB_URI }}
-      - name: Run Lighthouse CI
-        run: lhci autorun --collect.staticDistDir=out
+      - name: Run Lighthouse CI on SSR
+        run: |
+          npm start &                    # start the Next.js server in background
+          npx wait-on http://localhost:3000
+          lhci autorun --collect.url=http://localhost:3000
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
