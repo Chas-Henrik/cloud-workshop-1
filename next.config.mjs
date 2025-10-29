@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Remove output: 'export' for serverless deployment
+  /* config options here */
 };
 
 export default nextConfig;
-
