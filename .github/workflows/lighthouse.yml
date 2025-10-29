@@ -10,17 +10,8 @@ jobs:
         with:
           node-version: 18
       - run: npm install && npm install -g @lhci/cli@0.15.x
-      - name: Build app
-        run: npm run build
-        env:
-          VERCEL_MONGODB_URI: ${{ secrets.VERCEL_MONGODB_URI }}
-      - name: Start Next.js server
-        run: npm start &
-        
-      - name: Wait for server ready
-        run: npx wait-on http://localhost:3000
 
-      - name: Run Lighthouse CI
+      - name: Run Lighthouse CI on Vercel
         run: |
           lhci collect --url=https://cloud-workshop-1.vercel.app --numberOfRuns=3
           lhci upload --target=temporary-public-storage
