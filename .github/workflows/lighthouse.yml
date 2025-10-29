@@ -22,7 +22,7 @@ jobs:
 
       - name: Run Lighthouse CI
         run: |
-          lhci collect --url=http://localhost:3000 --numberOfRuns=3
+          lhci collect --url=https://cloud-workshop-1.vercel.app --numberOfRuns=3
           lhci upload --target=temporary-public-storage
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
