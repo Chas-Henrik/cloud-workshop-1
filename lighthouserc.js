@@ -2,11 +2,12 @@
 module.exports = {
   ci: {
     collect: {
-      staticDistDir: "out", // or ".next" if you're serving it differently
-      startServerCommand: "npm start", // optional, for SSR
+      url: ['https://cloud-workshop-1.vercel.app'],
+      numberOfRuns: 3,
+      static: false, // crucial for live SSR apps
     },
     upload: {
-      target: "temporary-public-storage", // or 'lhci' server if you host one
+      target: 'temporary-public-storage',
     },
   },
 };

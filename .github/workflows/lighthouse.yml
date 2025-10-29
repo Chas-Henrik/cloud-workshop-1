@@ -13,7 +13,7 @@ jobs:
 
       - name: Run Lighthouse CI on Vercel
         run: |
-          lhci collect --url=https://cloud-workshop-1.vercel.app --numberOfRuns=3
-          lhci upload --target=temporary-public-storage
+          lhci collect
+          lhci upload
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
