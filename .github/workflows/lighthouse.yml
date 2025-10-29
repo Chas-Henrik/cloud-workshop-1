@@ -14,10 +14,10 @@ jobs:
         run: npm run build
         env:
           VERCEL_MONGODB_URI: ${{ secrets.VERCEL_MONGODB_URI }}
-      - name: Run Lighthouse CI on SSR
+      - name: Start Next.js and wait
         run: |
-          npm start &                    # start the Next.js server in background
-          npx wait-on http://localhost:3000
+          npm start &                        # start Next.js server in background
+          npx wait-on http://localhost:3000  # wait until server is ready
           lhci autorun --collect.url=http://localhost:3000
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
